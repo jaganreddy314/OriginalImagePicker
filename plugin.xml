@@ -16,7 +16,7 @@
         <engine name="cordova" version=">=3.5.0" />
     </engines>
 
-    <js-module src="www/ImagePicker.js" name="ImagePicker">
+    <js-module src="www/imagepicker.js" name="ImagePicker">
         <clobbers target="ImagePicker" />
     </js-module>
 
