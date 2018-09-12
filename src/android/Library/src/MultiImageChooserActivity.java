@@ -132,6 +132,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("Inside the Oncreate MultiImage PIcker ");
         super.onCreate(savedInstanceState);
         fakeR = new FakeR(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

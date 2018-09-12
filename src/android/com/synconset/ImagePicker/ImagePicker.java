@@ -23,8 +23,9 @@ public class ImagePicker extends CordovaPlugin {
 	private JSONObject params;
 	 
 	public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-		 this.callbackContext = callbackContext;
-		 this.params = args.getJSONObject(0);
+		System.out.println("Inside the ImagePicker: " +action);
+		this.callbackContext = callbackContext;
+		this.params = args.getJSONObject(0);
 		if (action.equals("getPictures")) {
 			Intent intent = new Intent(cordova.getActivity(), MultiImageChooserActivity.class);
 			int max = 20;
