@@ -421,36 +421,43 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-        LayoutInflater inflater = (LayoutInflater) getActionBar().getThemedContext().getSystemService(
-                LAYOUT_INFLATER_SERVICE);
-        final View customActionBarView = inflater.inflate(fakeR.getId("layout", "actionbar"), null);
-        customActionBarView.findViewById(fakeR.getId("id", "actionbar_done")).setOnClickListener(new View.OnClickListener() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View customActionBarView = inflater.inflate(
+                fakeR.getId("layout", "actionbar_custom_view_done_discard"),
+                null
+        );
+
+        abDoneView = customActionBarView.findViewById(fakeR.getId("id", "actionbar_done"));
+        abDoneView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Done"
-                selectClicked(null);
+                selectClicked();
             }
         });
-        customActionBarView.findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
+
+        abDiscardView = customActionBarView.findViewById(fakeR.getId("id", "actionbar_discard"));
+        abDiscardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // "Select All"
-                allClicked(null);
-            }
-        });
-        customActionBarView.findViewById(fakeR.getId("id", "actionbar_discard")).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+                cancelClicked();
             }
         });
 
         // Show the custom action bar view and hide the normal Home icon and title.
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM
-                | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
-        actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(
+                    ActionBar.DISPLAY_SHOW_CUSTOM,
+                    ActionBar.DISPLAY_SHOW_CUSTOM
+                            | ActionBar.DISPLAY_SHOW_HOME
+                            | ActionBar.DISPLAY_SHOW_TITLE
+            );
+            actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            ));
+        }
     }
 
     private String getImageName(int position) {
