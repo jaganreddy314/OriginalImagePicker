@@ -299,12 +299,12 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         super.onPause();
     }
     
-    public void cancelClicked(View ignored) {
+    public void cancelClicked() {
         setResult(RESULT_CANCELED);
         finish();
     }
 
-    public void allClicked(View ignored) {
+    public void allClicked() {
         ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
         getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,7 +376,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         updateAcceptButton();
     }
 
-    public void selectClicked(View ignored) {
+    public void selectClicked() {
         ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
         getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
         progress.show();
