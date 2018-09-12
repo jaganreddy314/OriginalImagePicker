@@ -121,12 +121,15 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
     private GridView gridView;
     private TextView statusBarValue;
 
+
     private final ImageFetcher fetcher = new ImageFetcher();
 
     private int selectedColor = 0xff32b2e1;
     private boolean shouldRequestThumb = true;
     
     private FakeR fakeR;
+    private View abDoneView;
+    private View abDiscardView;
     
     private ProgressDialog progress;
 
