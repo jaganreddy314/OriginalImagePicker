@@ -214,7 +214,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         } else if (isChecked) {
             fileNames.put(name, new Integer(rotation));
             if (maxImageCount == 1) {
-                this.selectClicked(null);
+                this.selectClicked();
             } else {
                 maxImages--;
                 addOverlay(view);
@@ -351,7 +351,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
             @Override
             public void onClick(View v) {
                 // "Select All"
-                allClicked(null);
+                allClicked();
             }
         });
 
