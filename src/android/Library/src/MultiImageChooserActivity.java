@@ -521,6 +521,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     Entry<String, Integer> imageInfo = i.next();
                     System.out.println("imageInfo:  " + imageInfo);
                     System.out.println("getKey:  " + imageInfo.getKey());
+                    File file1 = new File(imageInfo.getKey());
                     File file = new File(imageInfo.getKey());
                     int rotate = imageInfo.getValue();
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -573,7 +574,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     if (outputType == OutputType.FILE_URI) {
                         file = storeImage(bmp, file.getName());
                         System.out.println("Files after storing " + file);
-                        al.add(Uri.fromFile(imageInfo.getKey()).toString());
+                        al.add(Uri.fromFile(file1).toString());
 
                     } else if (outputType == OutputType.BASE64_STRING) {
                         al.add(getBase64OfImage(bmp));
