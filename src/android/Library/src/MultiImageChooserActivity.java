@@ -81,7 +81,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MultiImageChooserActivity extends AppCompatActivity  implements OnItemClickListener,
+public class MultiImageChooserActivity extends Activity implements OnItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ImagePicker";
 
@@ -132,7 +132,7 @@ public class MultiImageChooserActivity extends AppCompatActivity  implements OnI
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("Inside the Oncreate MultiImage PIcker ");
+        System.out.println("Inside the Oncreate MultiImage PIcker " + getActionBar());
         super.onCreate(savedInstanceState);
         fakeR = new FakeR(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
