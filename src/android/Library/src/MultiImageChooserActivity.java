@@ -44,7 +44,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
+import java.io.ByteArrayOutputStream;
+import android.content.pm.ActivityInfo;
 import com.synconset.FakeR;
 import android.app.Activity;
 import android.app.ActionBar;
@@ -66,6 +67,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Display;
@@ -81,7 +85,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MultiImageChooserActivity extends Activity implements OnItemClickListener,
+public class MultiImageChooserActivity extends AppCompatActivity implements OnItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ImagePicker";
 
@@ -132,7 +136,6 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("Inside the Oncreate MultiImage PIcker " + getActionBar());
         super.onCreate(savedInstanceState);
         fakeR = new FakeR(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -421,7 +424,8 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-        LayoutInflater inflater = (LayoutInflater) getActionBar().getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getActionBar().getThemedContext().getSystemService(
+                LAYOUT_INFLATER_SERVICE);
         final View customActionBarView = inflater.inflate(fakeR.getId("layout", "actionbar"), null);
         customActionBarView.findViewById(fakeR.getId("id", "actionbar_done")).setOnClickListener(new View.OnClickListener() {
             @Override
