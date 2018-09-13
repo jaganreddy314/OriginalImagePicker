@@ -308,8 +308,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void allClicked(View ignored) {
-        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
-        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
+        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
+        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Select All"
@@ -349,8 +349,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void deselectAllClicked(View ignored) {
-        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "all")));
-        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
+        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "all")));
+        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Select All"
@@ -380,8 +380,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void selectClicked(View ignored) {
-        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
-        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
+        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
+        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
         progress.show();
         Intent data = new Intent();
         if (fileNames.isEmpty()) {
@@ -398,9 +398,9 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
      * Helper Methods
      ********************/
     private void updateAcceptButton() {
-        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview")))
+        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview")))
                 .setEnabled(fileNames.size() != 0);
-        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(fileNames.size() != 0);
+                getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(fileNames.size() != 0);
     }
 
     private void updateSelectionCount() {
