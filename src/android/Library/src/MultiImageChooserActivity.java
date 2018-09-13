@@ -48,7 +48,7 @@ import java.io.ByteArrayOutputStream;
 import android.content.pm.ActivityInfo;
 import com.synconset.FakeR;
 import android.app.Activity;
-import android.support.v7.app.ActionBar;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
@@ -138,7 +138,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("Multiselect : " + getSupportActionBar());
+        System.out.println("Multiselect : " + getActionBar());
         super.onCreate(savedInstanceState);
         fakeR = new FakeR(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -308,8 +308,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void allClicked(View ignored) {
-        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
-        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
+        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
+        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Select All"
@@ -349,8 +349,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void deselectAllClicked(View ignored) {
-        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "all")));
-        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
+        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "all")));
+        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Select All"
@@ -380,8 +380,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     }
 
     public void selectClicked(View ignored) {
-        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
-        getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
+        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
+        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
         progress.show();
         Intent data = new Intent();
         if (fileNames.isEmpty()) {
@@ -398,9 +398,9 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
      * Helper Methods
      ********************/
     private void updateAcceptButton() {
-        ((TextView) getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview")))
+        ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview")))
                 .setEnabled(fileNames.size() != 0);
-                getSupportActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(fileNames.size() != 0);
+        getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(fileNames.size() != 0);
     }
 
     private void updateSelectionCount() {
@@ -452,7 +452,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
         });
 
         // Show the custom action bar view and hide the normal Home icon and title.
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayOptions(
                     ActionBar.DISPLAY_SHOW_CUSTOM,
