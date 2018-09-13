@@ -19,7 +19,6 @@ package com.synconset;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -291,7 +290,7 @@ public class ImageFetcher {
     private final HashMap<Integer, Bitmap> sHardBitmapCache = new LinkedHashMap<Integer, Bitmap>(
             HARD_CACHE_CAPACITY / 2, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Integer, Bitmap> eldest) {
+        protected boolean removeEldestEntry(HashMap.Entry<Integer, Bitmap> eldest) {
             if (size() > HARD_CACHE_CAPACITY) {
                 // Entries push-out of hard reference cache are transferred to
                 // soft reference cache
