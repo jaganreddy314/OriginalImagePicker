@@ -513,7 +513,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
             Set<Entry<String, Integer>> fileNames = fileSets[0];
             System.out.println("FileNames: " + fileNames.toString());
             ArrayList<String> al = new ArrayList<String>();
-            try {
+           // try {
                 Iterator<Entry<String, Integer>> i = fileNames.iterator();
                 System.out.println("i : " + i);
                 Bitmap bmp;
@@ -583,19 +583,20 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                 }
                 System.out.println("Files return list A1" + al);
                 return al;
-            } catch (IOException e) {
-                try {
-                    asyncTaskError = e;
-                    for (int i = 0; i < al.size(); i++) {
-                        URI uri = new URI(al.get(i));
-                        File file = new File(uri);
-                        file.delete();
-                    }
-                } catch (Exception ignore) {
-                }
+            //} 
+            // catch (IOException e) {
+            //     try {
+            //         asyncTaskError = e;
+            //         for (int i = 0; i < al.size(); i++) {
+            //             URI uri = new URI(al.get(i));
+            //             File file = new File(uri);
+            //             file.delete();
+            //         }
+            //     } catch (Exception ignore) {
+            //     }
 
-                return new ArrayList<String>();
-            }
+            //     return new ArrayList<String>();
+            // }
         }
 
         @Override
