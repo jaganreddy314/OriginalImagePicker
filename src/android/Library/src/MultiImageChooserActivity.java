@@ -81,7 +81,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MultiImageChooserActivity extends Activity implements OnItemClickListener,
+public class MultiImageChooserActivity extends AppCompatActivity  implements OnItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ImagePicker";
 
@@ -121,15 +121,12 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
     private GridView gridView;
     private TextView statusBarValue;
 
-
     private final ImageFetcher fetcher = new ImageFetcher();
 
     private int selectedColor = 0xff32b2e1;
     private boolean shouldRequestThumb = true;
     
     private FakeR fakeR;
-    private View abDoneView;
-    private View abDiscardView;
     
     private ProgressDialog progress;
 
@@ -214,7 +211,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         } else if (isChecked) {
             fileNames.put(name, new Integer(rotation));
             if (maxImageCount == 1) {
-                this.selectClicked();
+                this.selectClicked(null);
             } else {
                 maxImages--;
                 addOverlay(view);
@@ -299,12 +296,12 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         super.onPause();
     }
     
-    public void cancelClicked() {
+    public void cancelClicked(View ignored) {
         setResult(RESULT_CANCELED);
         finish();
     }
 
-    public void allClicked() {
+    public void allClicked(View ignored) {
         ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all_textview"))).setText(getString(fakeR.getId("string", "clear")));
         getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -351,7 +348,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
             @Override
             public void onClick(View v) {
                 // "Select All"
-                allClicked();
+                allClicked(null);
             }
         });
 
@@ -376,7 +373,7 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         updateAcceptButton();
     }
 
-    public void selectClicked() {
+    public void selectClicked(View ignored) {
         ((TextView) getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done_textview"))).setEnabled(false);
         getActionBar().getCustomView().findViewById(fakeR.getId("id", "actionbar_done")).setEnabled(false);
         progress.show();
@@ -424,43 +421,35 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View customActionBarView = inflater.inflate(
-                fakeR.getId("layout", "actionbar_custom_view_done_discard"),
-                null
-        );
-
-        abDoneView = customActionBarView.findViewById(fakeR.getId("id", "actionbar_done"));
-        abDoneView.setOnClickListener(new View.OnClickListener() {
+        LayoutInflater inflater = (LayoutInflater) getActionBar().getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View customActionBarView = inflater.inflate(fakeR.getId("layout", "actionbar"), null);
+        customActionBarView.findViewById(fakeR.getId("id", "actionbar_done")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // "Done"
-                selectClicked();
+                selectClicked(null);
             }
         });
-
-        abDiscardView = customActionBarView.findViewById(fakeR.getId("id", "actionbar_discard"));
-        abDiscardView.setOnClickListener(new View.OnClickListener() {
+        customActionBarView.findViewById(fakeR.getId("id", "actionbar_all")).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelClicked();
+                // "Select All"
+                allClicked(null);
+            }
+        });
+        customActionBarView.findViewById(fakeR.getId("id", "actionbar_discard")).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
         // Show the custom action bar view and hide the normal Home icon and title.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayOptions(
-                    ActionBar.DISPLAY_SHOW_CUSTOM,
-                    ActionBar.DISPLAY_SHOW_CUSTOM
-                            | ActionBar.DISPLAY_SHOW_HOME
-                            | ActionBar.DISPLAY_SHOW_TITLE
-            );
-            actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            ));
-        }
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM
+                | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private String getImageName(int position) {
