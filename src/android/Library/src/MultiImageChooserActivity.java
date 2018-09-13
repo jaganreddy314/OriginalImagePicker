@@ -48,7 +48,6 @@ import java.io.ByteArrayOutputStream;
 import android.content.pm.ActivityInfo;
 import com.synconset.FakeR;
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
