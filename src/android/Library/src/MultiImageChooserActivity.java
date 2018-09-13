@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import android.media.ExifInterface;
 
 import com.synconset.FakeR;
 import android.app.AlertDialog;
@@ -522,6 +523,10 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     System.out.println("imageInfo:  " + imageInfo);
                     System.out.println("getKey:  " + imageInfo.getKey());
                     File file1 = new File(imageInfo.getKey());
+                    ExifInterface exifInterface = new ExifInterface(Uri.fromFile(file).toString());
+                    String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude);
                     File file = new File(imageInfo.getKey());
                     int rotate = imageInfo.getValue();
                     BitmapFactory.Options options = new BitmapFactory.Options();
