@@ -522,63 +522,64 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     System.out.println("imageInfo:  " + imageInfo);
                     System.out.println("getKey:  " + imageInfo.getKey());
                     File file1 = new File(imageInfo.getKey());
-                    File file = new File(imageInfo.getKey());
-                    int rotate = imageInfo.getValue();
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 1;
-                    options.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-                    int width = options.outWidth;
-                    int height = options.outHeight;
-                    float scale = calculateScale(width, height);
+                    // File file = new File(imageInfo.getKey());
+                    // int rotate = imageInfo.getValue();
+                    // BitmapFactory.Options options = new BitmapFactory.Options();
+                    // options.inSampleSize = 1;
+                    // options.inJustDecodeBounds = true;
+                    // BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+                    // int width = options.outWidth;
+                    // int height = options.outHeight;
+                    // float scale = calculateScale(width, height);
 
-                    if (scale < 1) {
-                        int finalWidth = (int)(width * scale);
-                        int finalHeight = (int)(height * scale);
-                        int inSampleSize = calculateInSampleSize(options, finalWidth, finalHeight);
-                        options = new BitmapFactory.Options();
-                        options.inSampleSize = inSampleSize;
+                    // if (scale < 1) {
+                    //     int finalWidth = (int)(width * scale);
+                    //     int finalHeight = (int)(height * scale);
+                    //     int inSampleSize = calculateInSampleSize(options, finalWidth, finalHeight);
+                    //     options = new BitmapFactory.Options();
+                    //     options.inSampleSize = inSampleSize;
 
-                        try {
-                            bmp = this.tryToGetBitmap(file, options, rotate, true);
-                        } catch (OutOfMemoryError e) {
-                            options.inSampleSize = calculateNextSampleSize(options.inSampleSize);
-                            try {
-                                bmp = this.tryToGetBitmap(file, options, rotate, false);
-                            } catch (OutOfMemoryError e2) {
-                                throw new IOException("Unable to load image into memory.");
-                            }
-                        }
-                    } else {
-                        try {
-                            bmp = this.tryToGetBitmap(file, null, rotate, false);
-                        } catch(OutOfMemoryError e) {
-                            options = new BitmapFactory.Options();
-                            options.inSampleSize = 2;
+                    //     try {
+                    //         bmp = this.tryToGetBitmap(file, options, rotate, true);
+                    //     } catch (OutOfMemoryError e) {
+                    //         options.inSampleSize = calculateNextSampleSize(options.inSampleSize);
+                    //         try {
+                    //             bmp = this.tryToGetBitmap(file, options, rotate, false);
+                    //         } catch (OutOfMemoryError e2) {
+                    //             throw new IOException("Unable to load image into memory.");
+                    //         }
+                    //     }
+                    // } else {
+                    //     try {
+                    //         bmp = this.tryToGetBitmap(file, null, rotate, false);
+                    //     } catch(OutOfMemoryError e) {
+                    //         options = new BitmapFactory.Options();
+                    //         options.inSampleSize = 2;
 
-                            try {
-                                bmp = this.tryToGetBitmap(file, options, rotate, false);
-                            } catch(OutOfMemoryError e2) {
-                                options = new BitmapFactory.Options();
-                                options.inSampleSize = 4;
+                    //         try {
+                    //             bmp = this.tryToGetBitmap(file, options, rotate, false);
+                    //         } catch(OutOfMemoryError e2) {
+                    //             options = new BitmapFactory.Options();
+                    //             options.inSampleSize = 4;
 
-                                try {
-                                    bmp = this.tryToGetBitmap(file, options, rotate, false);
-                                } catch (OutOfMemoryError e3) {
-                                    throw new IOException("Unable to load image into memory.");
-                                }
-                            }
-                        }
-                    }
+                    //             try {
+                    //                 bmp = this.tryToGetBitmap(file, options, rotate, false);
+                    //             } catch (OutOfMemoryError e3) {
+                    //                 throw new IOException("Unable to load image into memory.");
+                    //             }
+                    //         }
+                    //     }
+                    // }
 
                     if (outputType == OutputType.FILE_URI) {
-                        file = storeImage(bmp, file.getName());
-                        System.out.println("Files after storing " + file);
+                        // file = storeImage(bmp, file.getName());
+                        // System.out.println("Files after storing " + file);
                         al.add(Uri.fromFile(file1).toString());
 
-                    } else if (outputType == OutputType.BASE64_STRING) {
-                        al.add(getBase64OfImage(bmp));
                     }
+                    //  else if (outputType == OutputType.BASE64_STRING) {
+                    //     al.add(getBase64OfImage(bmp));
+                    // }
                 }
                 System.out.println("Files return list A1" + al);
                 return al;
