@@ -29,7 +29,7 @@
  */
 
 package com.synconset;
-
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +48,7 @@ import java.io.ByteArrayOutputStream;
 import android.content.pm.ActivityInfo;
 import com.synconset.FakeR;
 import android.app.Activity;
-import android.app.ActionBar;
+import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
@@ -96,6 +96,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
     public static final String WIDTH_KEY = "WIDTH";
     public static final String HEIGHT_KEY = "HEIGHT";
     public static final String QUALITY_KEY = "QUALITY";
+    public static final String OUTPUT_TYPE_KEY = "OUTPUT_TYPE";
 
     private ImageAdapter ia;
 
@@ -446,7 +447,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
         abDiscardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelClicked();
+                cancelClicked(null);
             }
         });
 
@@ -874,6 +875,26 @@ public class MultiImageChooserActivity extends AppCompatActivity implements OnIt
             imageView.setAlpha(255);
         }
         view.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    enum OutputType {
+
+        FILE_URI(0), BASE64_STRING(1);
+
+        int value;
+
+        OutputType(int value) {
+            this.value = value;
+        }
+
+        public static OutputType fromValue(int value) {
+            for (OutputType type : OutputType.values()) {
+                if (type.value == value) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("Invalid enum value specified");
+        }
     }
 
 }
