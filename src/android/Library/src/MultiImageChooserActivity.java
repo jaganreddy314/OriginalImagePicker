@@ -529,7 +529,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
                     System.out.println("imageInfo1");
                     String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude);
+                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude + "ExifInterface " + exifInterface.toString());
                     File file = new File(imageInfo.getKey());
                     int rotate = imageInfo.getValue();
                     BitmapFactory.Options options = new BitmapFactory.Options();
