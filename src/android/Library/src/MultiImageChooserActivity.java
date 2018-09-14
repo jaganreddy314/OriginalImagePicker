@@ -523,8 +523,11 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     System.out.println("imageInfo:  " + imageInfo);
                     System.out.println("getKey:  " + imageInfo.getKey());
                     File file1 = new File(imageInfo.getKey());
+                    System.out.println("imageInfo1");
                     ExifInterface exifInterface = new ExifInterface(Uri.fromFile(file1).toString());
+                    System.out.println("imageInfo1");
                     String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    System.out.println("imageInfo1");
                     String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
                     System.out.println("Latitude: "+ latitude + " longitude: "+  longitude);
                     File file = new File(imageInfo.getKey());
