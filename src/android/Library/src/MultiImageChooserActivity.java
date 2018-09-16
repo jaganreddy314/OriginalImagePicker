@@ -79,6 +79,20 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.common.RationalNumber;
+import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
+import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
+import org.apache.commons.io.FileUtils;
+
 public class MultiImageChooserActivity extends AppCompatActivity implements
         OnItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -523,6 +537,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     System.out.println("imageInfo:  " + imageInfo);
                     System.out.println("getKey:  " + imageInfo.getKey());
                     File file1 = new File(imageInfo.getKey());
+                    TiffOutputSet exifData = this.getExifData(file1);
                     System.out.println("imageInfo1");
                     ExifInterface exifInterface = new ExifInterface(file1.getAbsolutePath());
                     System.out.println("imageInfo1");
@@ -582,6 +597,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     if (outputType == OutputType.FILE_URI) {
                         file = storeImage(bmp, file.getName());
                         System.out.println("Files after storing " + file);
+                        this.exifDataWriter(file, exifData);
+                        System.out.println("After Wrting exif data ");
                         al.add(Uri.fromFile(file).toString());
 
                     } else if (outputType == OutputType.BASE64_STRING) {
@@ -602,6 +619,15 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                 }
 
                 return new ArrayList<String>();
+            }
+        }
+
+
+        public void exifDataWriter(File file, TiffOutputSet exifData) {
+            try (FileOutputStream fos = new FileOutputStream(dst);
+                OutputStream os = new BufferedOutputStream(fos);) {
+                    ExifRewriter ER = new ExifRewriter();
+                    ER.updateExifMetadataLossless(file, os, exifData);
             }
         }
 
@@ -701,6 +727,22 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
             // recreate the new Bitmap
             return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
         }
+        
+        private TiffOutputSet getExifData(File imageFile) {
+            TiffOutputSet outputSet = null;
+            final ImageMetadata metadata = Imaging.getMetadata(imageFile); // filepath is the path to your image file stored in SD card (which contains exif info)
+            JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+            if (null != jpegMetadata)
+            {
+                TiffImageMetadata exif = jpegMetadata.getExif();
+                if (null != exif)
+                {
+                    outputSet = exif.getOutputSet();
+                }
+            }
+            return outputSet;
+        }
+
 
        private String getBase64OfImage(Bitmap bm) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
