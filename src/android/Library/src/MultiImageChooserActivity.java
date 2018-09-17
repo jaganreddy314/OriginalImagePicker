@@ -575,11 +575,13 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                         file = storeImage(bmp, file.getName());
                         if(exifInterface != null) {
                             ExifInterface exifModifiedImage = new ExifInterface(file.getAbsolutePath());
-                            if(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                            if(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-                            if(exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL));
-                            if(exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
-                            exifModifiedImage.saveAttributes();
+                            if(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null && exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null) {
+                                exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                                exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                                if(exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL));
+                                if(exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE) != null) exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
+                                if(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null) exifModifiedImage.saveAttributes();
+                            }
                         }
                         al.add(Uri.fromFile(file).toString());
 
