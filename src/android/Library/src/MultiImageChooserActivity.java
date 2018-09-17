@@ -529,7 +529,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
                     System.out.println("imageInfo1");
                     String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude + "ExifInterface " + exifInterface);
+                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude );
                     File file = new File(imageInfo.getKey());
                     int rotate = imageInfo.getValue();
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -582,9 +582,19 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     if (outputType == OutputType.FILE_URI) {
                         file = storeImage(bmp, file.getName());
                         ExifInterface exifInterface1 = new ExifInterface(file.getAbsolutePath());
+                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        System.out.println("Latitude: "+ latitude1 + " longitude: "+  longitude1 );
                         exifInterface1.setAttribute(ExifInterface.TAG_GPS_LATITUDE, latitude);
                         exifInterface1.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, longitude);
                         System.out.println("Files after storing " + file);
+                        ExifInterface exifInterface2 = new ExifInterface(file.getAbsolutePath());
+                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        System.out.println("Latitude: "+ latitude1 + " longitude: "+  longitude1 );
+                        String latitude2 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String latitude2 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        System.out.println("Latitude: "+ latitude2 + " longitude: "+  longitude2 );
                         al.add(Uri.fromFile(file).toString());
 
                     } else if (outputType == OutputType.BASE64_STRING) {
