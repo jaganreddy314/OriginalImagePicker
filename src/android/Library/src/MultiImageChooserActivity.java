@@ -583,17 +583,17 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                         file = storeImage(bmp, file.getName());
                         ExifInterface exifInterface1 = new ExifInterface(file.getAbsolutePath());
                         String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String longitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
                         System.out.println("Latitude: "+ latitude1 + " longitude: "+  longitude1 );
                         exifInterface1.setAttribute(ExifInterface.TAG_GPS_LATITUDE, latitude);
                         exifInterface1.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, longitude);
                         System.out.println("Files after storing " + file);
                         ExifInterface exifInterface2 = new ExifInterface(file.getAbsolutePath());
                         String latitude2 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String latitude2 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String longitude2 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
                         System.out.println("Latitude: "+ latitude2 + " longitude: "+  longitude2 );
                         String latitude3 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String latitude3 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String longitude3 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
                         System.out.println("Latitude: "+ latitude3 + " longitude: "+  longitude3 );
                         al.add(Uri.fromFile(file).toString());
 
