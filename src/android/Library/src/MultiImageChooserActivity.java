@@ -576,8 +576,11 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                         ExifInterface exifModifiedImage = new ExifInterface(file.getAbsolutePath());
                         exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
                         exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-                        exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME, exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL));
                         exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
+                        System.out.println("Time : " + exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL));
+                        System.out.println("Device: " + exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_PROGRAM));
+                        System.out.println("Device: " + exifInterface.getAttribute(ExifInterface.TAG_FILE_SOURCE));
                         exifModifiedImage.setAttribute(ExifInterface.TAG_EXPOSURE_PROGRAM, exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_PROGRAM));
                         exifModifiedImage.saveAttributes();
                         al.add(Uri.fromFile(file).toString());
