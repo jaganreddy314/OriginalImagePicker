@@ -520,16 +520,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                 Bitmap bmp;
                 while (i.hasNext()) {
                     Entry<String, Integer> imageInfo = i.next();
-                    System.out.println("imageInfo:  " + imageInfo);
-                    System.out.println("getKey:  " + imageInfo.getKey());
-                    File file1 = new File(imageInfo.getKey());
-                    System.out.println("imageInfo1");
-                    ExifInterface exifInterface = new ExifInterface(file1.getAbsolutePath());
-                    System.out.println("imageInfo1");
-                    String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                    System.out.println("imageInfo1");
-                    String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                    System.out.println("Latitude: "+ latitude + " longitude: "+  longitude );
+                    File originalFile = new File(imageInfo.getKey());
+                    ExifInterface exifInterface = new ExifInterface(originalFile.getAbsolutePath());
                     File file = new File(imageInfo.getKey());
                     int rotate = imageInfo.getValue();
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -581,21 +573,13 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
 
                     if (outputType == OutputType.FILE_URI) {
                         file = storeImage(bmp, file.getName());
-                        ExifInterface exifInterface1 = new ExifInterface(file.getAbsolutePath());
-                        String latitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String longitude1 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                        System.out.println("Latitude: "+ latitude1 + " longitude: "+  longitude1 );
-                        exifInterface1.setAttribute(ExifInterface.TAG_GPS_LATITUDE, latitude);
-                        exifInterface1.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, longitude);
-                        exifInterface1.saveAttributes();
-                        System.out.println("Files after storing " + file);
-                        ExifInterface exifInterface2 = new ExifInterface(file.getAbsolutePath());
-                        String latitude2 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String longitude2 = exifInterface1.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                        System.out.println("Latitude: "+ latitude2 + " longitude: "+  longitude2 );
-                        String latitude3 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                        String longitude3 = exifInterface2.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                        System.out.println("Latitude: "+ latitude3 + " longitude: "+  longitude3 );
+                        ExifInterface exifModifiedImage = new ExifInterface(file.getAbsolutePath());
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME, exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
+                        exifModifiedImage.setAttribute(ExifInterface.TAG_EXPOSURE_PROGRAM, exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_PROGRAM));
+                        exifModifiedImage.saveAttributes();
                         al.add(Uri.fromFile(file).toString());
 
                     } else if (outputType == OutputType.BASE64_STRING) {
