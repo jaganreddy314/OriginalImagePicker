@@ -574,7 +574,11 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     if (outputType == OutputType.FILE_URI) {
                         file = storeImage(bmp, file.getName());
                         if(exifInterface != null) {
+                            System.out.println("Inside exif interface exists");
                             ExifInterface exifModifiedImage = new ExifInterface(file.getAbsolutePath());
+                            System.out.println("latititude " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                            System.out.println("latititude " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                            System.out.println("TAG_GPS_ALTITUDE " + exifInterface.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
                             exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
                             exifModifiedImage.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
                             exifModifiedImage.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL));
