@@ -173,7 +173,7 @@ typedef enum : NSUInteger {
 {
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 
-    NSLog(@"GMImagePicker: User finished picking assets. Number of selected items is: %lu", (unsigned long)fetchArray.count);
+    NSLog(@"GMImagePicker: User finished picking assets. Number of selected items is: %@",fetchArray);
 
     NSMutableArray * result_all = [[NSMutableArray alloc] init];
     CGSize targetSize = CGSizeMake(self.width, self.height);
@@ -196,7 +196,7 @@ typedef enum : NSUInteger {
         } while ([fileMgr fileExistsAtPath:filePath]);
 
         NSData* data = nil;
-        //if (true) {
+        if (self.width == 0 && self.height == 0) {
             // no scaling required
             if (self.outputType == BASE64_STRING){
                 UIImage* image = [UIImage imageNamed:item.image_fullsize];
@@ -217,23 +217,23 @@ typedef enum : NSUInteger {
                     }
                 }
             }
-        // } else {
-        //     // scale
-        //     UIImage* image = [UIImage imageNamed:item.image_fullsize];
-        //     UIImage* scaledImage = [self imageByScalingNotCroppingForSize:image toSize:targetSize];
-        //     data = UIImageJPEGRepresentation(scaledImage, self.quality/100.0f);
+        } else {
+            // scale
+            UIImage* image = [UIImage imageNamed:item.image_fullsize];
+            UIImage* scaledImage = [self imageByScalingNotCroppingForSize:image toSize:targetSize];
+            data = UIImageJPEGRepresentation(scaledImage, self.quality/100.0f);
 
-        //     if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
-        //         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
-        //         break;
-        //     } else {
-        //         if(self.outputType == BASE64_STRING){
-        //             [result_all addObject:[data base64EncodedStringWithOptions:0]];
-        //         } else {
-        //             [result_all addObject:[[NSURL fileURLWithPath:filePath] absoluteString]];
-        //         }
-        //     }
-        // }
+            if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
+                break;
+            } else {
+                if(self.outputType == BASE64_STRING){
+                    [result_all addObject:[data base64EncodedStringWithOptions:0]];
+                } else {
+                    [result_all addObject:[[NSURL fileURLWithPath:filePath] absoluteString]];
+                }
+            }
+        }
     }
 
     if (result == nil) {
