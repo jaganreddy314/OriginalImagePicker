@@ -20,7 +20,7 @@
 - (void) getPictures:(CDVInvokedUrlCommand *)command {
     NSDictionary *options = [command.arguments objectAtIndex: 0];
     NSInteger maximumImagesCount = [[options objectForKey:@"maximumImagesCount"] integerValue];
-    self.useOriginal = false;
+    self.useOriginal = [[options objectForKey:@"useOriginal"] boolValue];
     self.createThumbnail = [[options objectForKey:@"createThumbnail"] boolValue];
     self.saveToDataDirectory = [[options objectForKey:@"saveToDataDirectory"] boolValue];
     self.width = [[options objectForKey:@"width"] integerValue];
@@ -83,9 +83,9 @@
             
             // modifs luckybird
             NSURL *assetUrl = [assetRep url];
-            NSString *assetUrlString = [assetUrl absoluteString];
+            NSLog(@"Assest URL  %@ photos",assetUrl);
+            NSString *assetUrlString = [assetUrl path];
             NSString *assetFilename = [assetRep filename];
-
             NSDictionary* photo;
             photo = @{
                 @"localURL": assetUrlString,
