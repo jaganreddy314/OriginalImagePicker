@@ -220,6 +220,31 @@ typedef enum : NSUInteger {
         } else {
             // scale
             UIImage* image = [UIImage imageNamed:item.image_fullsize];
+            
+
+            NSData* pngData =  UIImageJPEGRepresentation(image, 1.0);
+
+            CGImageSourceRef mySourceRef = CGImageSourceCreateWithData((CFDataRef)pngData, NULL);
+
+            //CGImageSourceRef mySourceRef = CGImageSourceCreateWithURL((__bridge CFURLRef)myURL, NULL);
+            if (mySourceRef != NULL)
+            {
+                NSDictionary *myMetadata = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(mySourceRef,0,NULL);
+                NSDictionary *exifDic = [myMetadata objectForKey:(NSString *)kCGImagePropertyExifDictionary];
+                NSDictionary *tiffDic = [myMetadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
+                NSLog(@"exifDic properties: %@", myMetadata); //all data
+                float rawShutterSpeed = [[exifDic objectForKey:(NSString *)kCGImagePropertyExifExposureTime] floatValue];
+                int decShutterSpeed = (1 / rawShutterSpeed);
+                NSLog(@"Camera %@",[tiffDic objectForKey:(NSString *)kCGImagePropertyTIFFModel]);
+                NSLog(@"Focal Length %@mm",[exifDic objectForKey:(NSString *)kCGImagePropertyExifFocalLength]);
+                NSLog(@"Shutter Speed %@", [NSString stringWithFormat:@"1/%d", decShutterSpeed]);
+                NSLog(@"Aperture f/%@",[exifDic objectForKey:(NSString *)kCGImagePropertyExifFNumber]);
+
+
+                NSNumber *ExifISOSpeed  = [[exifDic objectForKey:(NSString*)kCGImagePropertyExifISOSpeedRatings] objectAtIndex:0];
+                NSLog(@"ISO %ld",[ExifISOSpeed integerValue]);
+                NSLog(@"Taken %@",[exifDic objectForKey:(NSString*)kCGImagePropertyExifDateTimeDigitized]);
+            }
             UIImage* scaledImage = [self imageByScalingNotCroppingForSize:image toSize:targetSize];
             data = UIImageJPEGRepresentation(scaledImage, self.quality/100.0f);
 
