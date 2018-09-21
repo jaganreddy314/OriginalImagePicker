@@ -20,7 +20,7 @@
 - (void) getPictures:(CDVInvokedUrlCommand *)command {
     NSDictionary *options = [command.arguments objectAtIndex: 0];
     NSInteger maximumImagesCount = [[options objectForKey:@"maximumImagesCount"] integerValue];
-    self.useOriginal = true;
+    self.useOriginal = false;
     self.createThumbnail = [[options objectForKey:@"createThumbnail"] boolValue];
     self.saveToDataDirectory = [[options objectForKey:@"saveToDataDirectory"] boolValue];
     self.width = [[options objectForKey:@"width"] integerValue];
