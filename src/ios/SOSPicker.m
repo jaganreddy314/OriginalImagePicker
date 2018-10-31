@@ -7,114 +7,106 @@
 //
 
 #import "SOSPicker.h"
-#import "ELCAlbumPickerController.h"
-#import "ELCImagePickerController.h"
-#import "ELCAssetTablePicker.h"
 
-#define CDV_PHOTO_PREFIX @"snw_photo_"
+
+#import "GMImagePickerController.h"
+#import "GMFetchItem.h"
+
+#define CDV_PHOTO_PREFIX @"cdv_photo_"
+
+typedef enum : NSUInteger {
+    FILE_URI = 0,
+    BASE64_STRING = 1
+} SOSPickerOutputType;
+
+@interface SOSPicker () <GMImagePickerControllerDelegate>
+@end
 
 @implementation SOSPicker
 
 @synthesize callbackId;
 
+- (void) hasReadPermission:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) requestReadPermission:(CDVInvokedUrlCommand *)command {
+    // [PHPhotoLibrary requestAuthorization:]
+    // this method works only when it is a first time, see
+    // https://developer.apple.com/library/ios/documentation/Photos/Reference/PHPhotoLibrary_Class/
+
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusAuthorized) {
+        NSLog(@"Access has been granted.");
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else if (status == PHAuthorizationStatusDenied) {
+        NSString* message = @"Access has been denied. Change your setting > this app > Photo enable";
+        NSLog(@"%@", message);
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else if (status == PHAuthorizationStatusNotDetermined) {
+        // Access has not been determined. requestAuthorization: is available
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {}];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else if (status == PHAuthorizationStatusRestricted) {
+        NSString* message = @"Access has been restricted. Change your setting > Privacy > Photo enable";
+        NSLog(@"%@", message);
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 - (void) getPictures:(CDVInvokedUrlCommand *)command {
+
     NSDictionary *options = [command.arguments objectAtIndex: 0];
+
+    self.outputType = [[options objectForKey:@"outputType"] integerValue];
+    BOOL allow_video = [[options objectForKey:@"allow_video" ] boolValue ];
     NSInteger maximumImagesCount = [[options objectForKey:@"maximumImagesCount"] integerValue];
-    self.useOriginal = [[options objectForKey:@"useOriginal"] boolValue];
-    self.createThumbnail = [[options objectForKey:@"createThumbnail"] boolValue];
-    self.saveToDataDirectory = [[options objectForKey:@"saveToDataDirectory"] boolValue];
+    NSString * title = [options objectForKey:@"title"];
+    NSString * message = [options objectForKey:@"message"];
+    BOOL disable_popover = [[options objectForKey:@"disable_popover" ] boolValue];
+    if (message == (id)[NSNull null]) {
+      message = nil;
+    }
     self.width = [[options objectForKey:@"width"] integerValue];
     self.height = [[options objectForKey:@"height"] integerValue];
     self.quality = [[options objectForKey:@"quality"] integerValue];
-    
-    // Create the an album controller and image picker
-    ELCAlbumPickerController *albumController = [[ELCAlbumPickerController alloc] init];
-    
-    if (maximumImagesCount == 1) {
-        albumController.immediateReturn = true;
-        albumController.singleSelection = true;
-    } else {
-        albumController.immediateReturn = false;
-        albumController.singleSelection = false;
-    }
-    
-    ELCImagePickerController *imagePicker = [[ELCImagePickerController alloc] initWithRootViewController:albumController];
-    imagePicker.maximumImagesCount = maximumImagesCount;
-    imagePicker.returnsOriginalImage = 1;
-    imagePicker.imagePickerDelegate = self;
-    
-    albumController.parent = imagePicker;
+
     self.callbackId = command.callbackId;
-    // Present modally
-    [self.viewController presentViewController:imagePicker
-                                      animated:YES
-                                    completion:nil];
-    // You can run the plugin in background to avoid Xcode warning by putting above code inside the execution block below.
-    // But there seems to have a problem with navigation bullet being delayed to appear.
-    // [self.commandDelegate runInBackground:^{
-    // }];
+    [self launchGMImagePicker:allow_video title:title message:message disable_popover:disable_popover maximumImagesCount:maximumImagesCount];
 }
 
+- (void)launchGMImagePicker:(bool)allow_video title:(NSString *)title message:(NSString *)message disable_popover:(BOOL)disable_popover maximumImagesCount:(NSInteger)maximumImagesCount
+{
+    GMImagePickerController *picker = [[GMImagePickerController alloc] init:allow_video];
+    picker.delegate = self;
+    picker.maximumImagesCount = maximumImagesCount;
+    picker.title = title;
+    picker.customNavigationBarPrompt = message;
+    picker.colsInPortrait = 4;
+    picker.colsInLandscape = 6;
+    picker.minimumInteritemSpacing = 2.0;
 
-- (void)elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info {
-    CDVPluginResult* result = nil;
-    NSMutableArray *resultStrings = [[NSMutableArray alloc] init];
-    Byte *buffer = 0;
-    NSUInteger buffered = 0;
-    NSData* data = nil;
-    NSData* thumbData = nil;
-    NSString *docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
-    if (self.saveToDataDirectory) {
-        NSString *libPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        docsPath = [libPath stringByAppendingPathComponent:@"NoCloud"];
+    if(!disable_popover) {
+        picker.modalPresentationStyle = UIModalPresentationPopover;
+
+        UIPopoverPresentationController *popPC = picker.popoverPresentationController;
+        popPC.permittedArrowDirections = UIPopoverArrowDirectionAny;
+        popPC.sourceView = picker.view;
+        //popPC.sourceRect = nil;
     }
-    NSError* err = nil;
-    ALAsset* asset = nil;
-    UIImageOrientation orientation = UIImageOrientationUp;;
-    CGSize targetSize = CGSizeMake(self.width, self.height);
-    NSMutableDictionary* photos = [NSMutableDictionary dictionaryWithDictionary:@{}];
-    for (NSDictionary *dict in info) {
-        asset = [dict objectForKey:@"ALAsset"];
-        // From ELCImagePickerController.m
-        
-        @autoreleasepool {
-            ALAssetRepresentation *assetRep = [asset defaultRepresentation];
-            CGImageRef imgRef = NULL;
-            
-            // modifs luckybird
-            NSURL *assetUrl = [assetRep url];
-            NSLog(@"Assest URL  %@ photos",assetUrl);
-            NSString *assetUrlString = [assetUrl path];
-            NSString *assetFilename = [assetRep filename];
-            NSDictionary* photo;
-            photo = @{
-                @"localURL": assetUrlString,
-                @"filename": assetFilename
-            };
-            [photos setObject:photo forKey:photo[@"localURL"]];
-      
-        }
-        
-    }
-    
-    if (nil == result) {
-        //result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:resultStrings];
-        NSArray* photoMsg = [photos allValues];
-        NSLog(@"[picker] Sending to phonegap application message with %lu photos",(unsigned long)[photoMsg count]);
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:photoMsg];
-    }
-    
-    [self.viewController dismissViewControllerAnimated:YES completion:nil];
-    [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+
+    [self.viewController showViewController:picker sender:nil];
 }
 
-- (void)elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker {
-    [self.viewController dismissViewControllerAnimated:YES completion:nil];
-    CDVPluginResult* pluginResult = nil;
-    NSArray* emptyArray = [NSArray array];
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:emptyArray];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-}
 
 - (UIImage*)imageByScalingNotCroppingForSize:(UIImage*)anImage toSize:(CGSize)frameSize
 {
@@ -142,7 +134,7 @@
         } else {
             scaleFactor = widthFactor; // scale to fit width
         }
-        scaledSize = CGSizeMake(width * scaleFactor, height * scaleFactor);
+        scaledSize = CGSizeMake(floor(width * scaleFactor), floor(height * scaleFactor));
     }
 
     UIGraphicsBeginImageContext(scaledSize); // this will resize
@@ -158,5 +150,106 @@
     UIGraphicsEndImageContext();
     return newImage;
 }
+
+
+#pragma mark - UIImagePickerControllerDelegate
+
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    NSLog(@"UIImagePickerController: User finished picking assets");
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    NSLog(@"UIImagePickerController: User pressed cancel button");
+}
+
+#pragma mark - GMImagePickerControllerDelegate
+
+- (void)assetsPickerController:(GMImagePickerController *)picker didFinishPickingAssets:(NSArray *)fetchArray
+{
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+
+    NSLog(@"GMImagePicker: User finished picking assets. Number of selected items is: %lu", (unsigned long)fetchArray.count);
+
+    NSMutableArray * result_all = [[NSMutableArray alloc] init];
+    CGSize targetSize = CGSizeMake(self.width, self.height);
+    NSFileManager* fileMgr = [[NSFileManager alloc] init];
+    NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
+
+    NSError* err = nil;
+    int i = 1;
+    NSString* filePath;
+    CDVPluginResult* result = nil;
+
+    for (GMFetchItem *item in fetchArray) {
+
+        if ( !item.image_fullsize ) {
+            continue;
+        }
+
+        do {
+            filePath = [NSString stringWithFormat:@"%@/%@%03d.%@", docsPath, CDV_PHOTO_PREFIX, i++, @"jpg"];
+        } while ([fileMgr fileExistsAtPath:filePath]);
+
+        NSData* data = nil;
+        if (self.width == 0 && self.height == 0) {
+            // no scaling required
+            if (self.outputType == BASE64_STRING){
+                UIImage* image = [UIImage imageNamed:item.image_fullsize];
+                [result_all addObject:[UIImageJPEGRepresentation(image, self.quality/100.0f) base64EncodedStringWithOptions:0]];
+            } else {
+                if (self.quality == 100) {
+                    // no scaling, no downsampling, this is the fastest option
+                    [result_all addObject:item.image_fullsize];
+                } else {
+                    // resample first
+                    UIImage* image = [UIImage imageNamed:item.image_fullsize];
+                    data = UIImageJPEGRepresentation(image, self.quality/100.0f);
+                    if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+                        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
+                        break;
+                    } else {
+                        [result_all addObject:[[NSURL fileURLWithPath:filePath] absoluteString]];
+                    }
+                }
+            }
+        } else {
+            // scale
+            UIImage* image = [UIImage imageNamed:item.image_fullsize];
+            UIImage* scaledImage = [self imageByScalingNotCroppingForSize:image toSize:targetSize];
+            data = UIImageJPEGRepresentation(scaledImage, self.quality/100.0f);
+
+            if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
+                break;
+            } else {
+                if(self.outputType == BASE64_STRING){
+                    [result_all addObject:[data base64EncodedStringWithOptions:0]];
+                } else {
+                    [result_all addObject:[[NSURL fileURLWithPath:filePath] absoluteString]];
+                }
+            }
+        }
+    }
+
+    if (result == nil) {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:result_all];
+    }
+
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+    [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+
+}
+
+//Optional implementation:
+-(void)assetsPickerControllerDidCancel:(GMImagePickerController *)picker
+{
+    NSLog(@"GMImagePicker: User pressed cancel button");
+}
+
 
 @end
